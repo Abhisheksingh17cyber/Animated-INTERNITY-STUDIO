@@ -25,3 +25,6 @@ yarn-error.log*
 
 # Nested clone artifacts
 Animated-INTERNITY-STUDIO/
+
+# Playwright screenshots
+.playwright-mcp/
