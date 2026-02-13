@@ -1,94 +1,81 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, useSpring } from 'framer-motion';
+import { useEffect, useRef, useCallback } from 'react';
 
 export default function HoneybeeCursor() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const trailRef = useRef<HTMLDivElement>(null);
+  const pos = useRef({ x: 0, y: 0 });
+  const trail = useRef({ x: 0, y: 0 });
+  const raf = useRef<number>(0);
 
-  const springConfig = { damping: 25, stiffness: 300 };
-  const cursorX = useSpring(0, springConfig);
-  const cursorY = useSpring(0, springConfig);
+  const animate = useCallback(() => {
+    // Lerp cursor toward target
+    trail.current.x += (pos.current.x - trail.current.x) * 0.15;
+    trail.current.y += (pos.current.y - trail.current.y) * 0.15;
 
-  const trailX = useSpring(0, { damping: 20, stiffness: 150 });
-  const trailY = useSpring(0, { damping: 20, stiffness: 150 });
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate3d(${pos.current.x - 12}px, ${pos.current.y - 12}px, 0)`;
+    }
+    if (trailRef.current) {
+      trailRef.current.style.transform = `translate3d(${trail.current.x - 20}px, ${trail.current.y - 20}px, 0)`;
+    }
+
+    raf.current = requestAnimationFrame(animate);
+  }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-      cursorX.set(e.clientX - 12);
-      cursorY.set(e.clientY - 12);
-      trailX.set(e.clientX - 20);
-      trailY.set(e.clientY - 20);
+    if (window.innerWidth < 768) return;
+
+    const onMove = (e: MouseEvent) => {
+      pos.current.x = e.clientX;
+      pos.current.y = e.clientY;
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.closest('a') ||
-        target.closest('button')
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
+    const onOver = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      const hovering = !!(t.tagName === 'A' || t.tagName === 'BUTTON' || t.closest('a') || t.closest('button'));
+      cursorRef.current?.classList.toggle('cursor-hover', hovering);
+      trailRef.current?.classList.toggle('trail-hover', hovering);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('mouseover', onOver, { passive: true });
+    raf.current = requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseover', onOver);
+      cancelAnimationFrame(raf.current);
     };
-  }, [cursorX, cursorY, trailX, trailY]);
-
-  if (typeof window !== 'undefined' && window.innerWidth < 768) {
-    return null;
-  }
+  }, [animate]);
 
   return (
     <>
-      {/* Main cursor - bee */}
-      <motion.div
-        className="fixed top-0 left-0 z-[10000] pointer-events-none mix-blend-difference"
-        style={{ x: cursorX, y: cursorY }}
-      >
-        <motion.div
-          animate={{
-            scale: isHovering ? 1.5 : 1,
-            rotate: isHovering ? 45 : 0,
-          }}
-          transition={{ duration: 0.2 }}
-          className="relative"
-        >
-          <div className="w-6 h-6 rounded-full bg-honey-primary flex items-center justify-center text-xs">
-            🐝
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Trail */}
-      <motion.div
-        className="fixed top-0 left-0 z-[9999] pointer-events-none"
-        style={{ x: trailX, y: trailY }}
-      >
-        <motion.div
-          animate={{
-            scale: isHovering ? 2 : 1,
-            opacity: isHovering ? 0.3 : 0.15,
-          }}
-          transition={{ duration: 0.3 }}
-          className="w-10 h-10 rounded-full border-2 border-honey-primary"
-          style={{
-            clipPath:
-              'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-          }}
-        />
-      </motion.div>
+      <style jsx>{`
+        .cursor-bee {
+          position: fixed; top: 0; left: 0; z-index: 10000;
+          pointer-events: none; will-change: transform;
+          width: 24px; height: 24px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 16px;
+          transition: font-size 0.2s ease;
+        }
+        .cursor-bee.cursor-hover { font-size: 22px; }
+        .cursor-trail {
+          position: fixed; top: 0; left: 0; z-index: 9999;
+          pointer-events: none; will-change: transform;
+          width: 40px; height: 40px;
+          border: 1.5px solid #F4A623;
+          clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+          opacity: 0.15;
+          transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+        }
+        .cursor-trail.trail-hover { opacity: 0.35; width: 56px; height: 56px; }
+        @media (max-width: 768px) { .cursor-bee, .cursor-trail { display: none; } }
+      `}</style>
+      <div ref={cursorRef} className="cursor-bee">🐝</div>
+      <div ref={trailRef} className="cursor-trail" />
     </>
   );
 }

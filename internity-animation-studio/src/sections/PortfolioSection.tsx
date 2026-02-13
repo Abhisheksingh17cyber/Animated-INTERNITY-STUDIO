@@ -78,13 +78,13 @@ export default function PortfolioSection() {
 
             {/* Honeycomb overlay */}
             <div className="absolute inset-0 opacity-10">
-              {Array.from({ length: 6 }, (_, i) => (
+              {[0, 1, 2].map((j) => (
                 <div
-                  key={i}
+                  key={j}
                   className="absolute w-20 h-20"
                   style={{
-                    left: `${(i % 3) * 35 + 10}%`,
-                    top: `${Math.floor(i / 3) * 45 + 15}%`,
+                    left: `${j * 35 + 10}%`,
+                    top: `${j * 30 + 15}%`,
                     clipPath:
                       'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
                     backgroundColor: item.color,

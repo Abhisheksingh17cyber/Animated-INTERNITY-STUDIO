@@ -1,81 +1,52 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { randomBetween } from '@/lib/utils';
-
-interface Bee {
-  id: number;
-  startX: number;
-  startY: number;
-  size: number;
-  duration: number;
-  delay: number;
-}
-
-function SmallBee({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <ellipse cx="12" cy="12" rx="6" ry="8" fill="#F4A623" />
-      <line x1="6" y1="9" x2="18" y2="9" stroke="#1A1A1A" strokeWidth="1.5" />
-      <line x1="6" y1="13" x2="18" y2="13" stroke="#1A1A1A" strokeWidth="1.5" />
-      <ellipse cx="8" cy="5" rx="4" ry="3" fill="#FFD70040" />
-      <ellipse cx="16" cy="5" rx="4" ry="3" fill="#FFD70040" />
-    </svg>
-  );
-}
-
 export default function FlyingBees() {
-  const [bees, setBees] = useState<Bee[]>([]);
-
-  useEffect(() => {
-    const generatedBees: Bee[] = Array.from({ length: 5 }, (_, i) => ({
-      id: i,
-      startX: randomBetween(0, 100),
-      startY: randomBetween(0, 100),
-      size: randomBetween(12, 24),
-      duration: randomBetween(15, 30),
-      delay: randomBetween(0, 5),
-    }));
-    setBees(generatedBees);
-  }, []);
-
   return (
     <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
-      {bees.map((bee) => (
-        <motion.div
-          key={bee.id}
-          className="absolute"
-          style={{
-            left: `${bee.startX}%`,
-            top: `${bee.startY}%`,
-          }}
-          animate={{
-            x: [0, 100, -50, 80, -30, 0],
-            y: [0, -60, 40, -80, 20, 0],
-          }}
-          transition={{
-            duration: bee.duration,
-            repeat: Infinity,
-            ease: 'linear',
-            delay: bee.delay,
-          }}
-        >
-          <motion.div
-            animate={{
-              rotate: [0, 10, -10, 5, -5, 0],
-              scale: [1, 1.1, 0.9, 1.05, 0.95, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          >
-            <SmallBee size={bee.size} />
-          </motion.div>
-        </motion.div>
-      ))}
+      <style jsx>{`
+        .bee {
+          position: absolute;
+          will-change: transform;
+          font-size: 14px;
+          opacity: 0.4;
+        }
+        .bee-1 {
+          left: 10%; top: 20%;
+          animation: fly1 25s linear infinite;
+        }
+        .bee-2 {
+          left: 70%; top: 60%;
+          animation: fly2 30s linear infinite 3s;
+        }
+        .bee-3 {
+          left: 40%; top: 80%;
+          animation: fly3 22s linear infinite 7s;
+        }
+        @keyframes fly1 {
+          0% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(80px, -50px) rotate(5deg); }
+          50% { transform: translate(-30px, 30px) rotate(-3deg); }
+          75% { transform: translate(60px, -70px) rotate(4deg); }
+          100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        @keyframes fly2 {
+          0% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(-60px, 40px) rotate(-4deg); }
+          50% { transform: translate(50px, -60px) rotate(3deg); }
+          75% { transform: translate(-40px, 20px) rotate(-2deg); }
+          100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        @keyframes fly3 {
+          0% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(70px, 30px) rotate(3deg); }
+          50% { transform: translate(-50px, -40px) rotate(-5deg); }
+          75% { transform: translate(30px, 50px) rotate(2deg); }
+          100% { transform: translate(0, 0) rotate(0deg); }
+        }
+      `}</style>
+      <span className="bee bee-1">🐝</span>
+      <span className="bee bee-2">🐝</span>
+      <span className="bee bee-3">🐝</span>
     </div>
   );
 }

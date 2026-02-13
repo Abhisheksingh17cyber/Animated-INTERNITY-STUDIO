@@ -65,38 +65,29 @@ export default function HeroSection() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-honey-light/5 rounded-full blur-[120px]" />
       </div>
 
-      {/* Floating hexagons */}
+      {/* Floating hexagons - CSS only */}
       <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 6 }, (_, i) => (
-          <motion.div
+        {[0, 1, 2].map((i) => (
+          <div
             key={i}
-            className="absolute"
+            className="absolute animate-float"
             style={{
-              left: `${15 + i * 15}%`,
-              top: `${20 + (i % 3) * 25}%`,
-              width: `${40 + i * 10}px`,
-              height: `${40 + i * 10}px`,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              rotate: [0, 5, -5, 0],
-              opacity: [0.1, 0.2, 0.1],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.5,
+              left: `${20 + i * 30}%`,
+              top: `${25 + (i % 2) * 30}%`,
+              width: `${50 + i * 12}px`,
+              height: `${50 + i * 12}px`,
+              animationDelay: `${i * 1.5}s`,
+              animationDuration: `${6 + i * 2}s`,
             }}
           >
             <div
-              className="w-full h-full border border-honey-primary/20"
+              className="w-full h-full border border-honey-primary/15"
               style={{
                 clipPath:
                   'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
               }}
             />
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -149,23 +140,14 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 3 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center gap-2"
-        >
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+        <div className="flex flex-col items-center gap-2 animate-float" style={{ animationDuration: '3s' }}>
           <span className="text-neutral-silver text-xs tracking-widest">
             SCROLL
           </span>
           <div className="w-px h-8 bg-gradient-to-b from-honey-primary to-transparent" />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }
