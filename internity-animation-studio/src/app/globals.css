@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/* Honeybee Theme Custom Properties */
+:root {
+  /* Honey colors */
+  --honey-light: #FFD700;
+  --honey-primary: #F4A623;
+  --honey-dark: #D4800D;
+  --honey-amber: #FFBF00;
+  
+  /* Comb colors */
+  --comb-light: #FFF8E1;
+  --comb-pattern: #FFE082;
+  --comb-dark: #8D6E63;
+  
+  /* Neutral colors */
+  --neutral-black: #1A1A1A;
+  --neutral-charcoal: #2D2D2D;
+  --neutral-gray: #6B6B6B;
+  --neutral-silver: #E0E0E0;
+  --neutral-white: #FAFAFA;
+  
+  /* Background */
+  --background: #0A0A0A;
+  --foreground: #FAFAFA;
+}
+
+@theme inline {
+  /* Honey color palette */
+  --color-honey-light: var(--honey-light);
+  --color-honey-primary: var(--honey-primary);
+  --color-honey-dark: var(--honey-dark);
+  --color-honey-amber: var(--honey-amber);
+  
+  /* Comb palette */
+  --color-comb-light: var(--comb-light);
+  --color-comb-pattern: var(--comb-pattern);
+  --color-comb-dark: var(--comb-dark);
+  
+  /* Neutral palette */
+  --color-neutral-black: var(--neutral-black);
+  --color-neutral-charcoal: var(--neutral-charcoal);
+  --color-neutral-gray: var(--neutral-gray);
+  --color-neutral-silver: var(--neutral-silver);
+  --color-neutral-white: var(--neutral-white);
+  
+  /* Background/Foreground */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Hide default cursor on desktop */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+/* Show cursor on mobile/touch */
+@media (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+  
+  * {
+    cursor: auto !important;
+  }
+}
+
+/* Selection styles */
+::selection {
+  background: var(--honey-primary);
+  color: var(--neutral-black);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-charcoal);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--honey-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--honey-light);
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(244, 166, 35, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(244, 166, 35, 0.6);
+  }
+}
+
+@keyframes honeycomb-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Utility animations */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-honeycomb-spin {
+  animation: honeycomb-spin 20s linear infinite;
+}
+
+/* Text character reveal setup */
+.char {
+  display: inline-block;
+  transform-style: preserve-3d;
+}
+
+/* Perspective for 3D text effects */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Honeycomb clip path */
+.clip-hexagon {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+/* Smooth loading */
+.page-transition {
+  will-change: transform, opacity;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
